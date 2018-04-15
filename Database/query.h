@@ -3,6 +3,7 @@
 
 #include <string>
 
+#include "db.h"
 #include "table.h"
 
 enum qtype {
@@ -13,15 +14,16 @@ enum qtype {
 class query {
 private:
 	std::string command;
-	table t;
+	table tl;
 	enum qtype qc;
 	/* This data should be different depending upon the table. */
-	data d;
+	data record;
+	const DB *db;
 	int parse_statement();
 	int insert_command();
 	int select_command();
 public:
-	query(std::string s);
+	query(std::string s, const DB *db);
 	int execute();
 };
 #endif

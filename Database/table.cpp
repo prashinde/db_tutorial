@@ -14,6 +14,7 @@ int data::put_blob(std::string blob)
 	this->blob = blob;
 	return 0;
 }
+
 std::string data::serialize()
 {
 	return std::string(std::to_string(this->pkey)+this->blob);
@@ -22,4 +23,16 @@ std::string data::serialize()
 std::string data::deserialize()
 {
 	return std::string("default");
+}
+
+int insert_row(data d)
+{
+	std::cout << d.serialize() << std::endl;
+	return 0;
+}
+
+int select_row(data d)
+{
+	std::cout << d.serialize() << std::endl;
+	return 0;
 }

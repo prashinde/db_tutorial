@@ -1,6 +1,6 @@
 #ifndef __TABLE_H_
 #define __TABLE_H_
-
+#include <string>
 #include <vector>
 
 class data {
@@ -18,8 +18,7 @@ class table {
 private:
 	std::vector<data> rows;
 public:
-	int insert_row();
-	int select_row();
+	int insert_row(data d);
+	int select_row(data d);
 };
-
 #endif
