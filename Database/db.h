@@ -12,12 +12,12 @@ private:
 	/* This is not an active feature */
 	//map<string, int> fhandles;
 	std::ofstream tl_fstream; //filename associated with table tl
-	table tl;
+	table *tl;
 public:
 	DB();
 	DB(const DB &db);
 	DB(std::string fname);
-	table get_table_by_name(std::string table_name) const;
+	table* get_table_by_name(std::string table_name) const;
 	int db_open();
 	int db_close();	
 };

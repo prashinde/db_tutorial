@@ -25,13 +25,13 @@ std::string data::deserialize()
 	return std::string("default");
 }
 
-int insert_row(data d)
+int table::insert_row(data d)
 {
 	std::cout << d.serialize() << std::endl;
 	return 0;
 }
 
-int select_row(data d)
+int table::select_row(data d)
 {
 	std::cout << d.serialize() << std::endl;
 	return 0;

@@ -14,7 +14,7 @@ enum qtype {
 class query {
 private:
 	std::string command;
-	table tl;
+	table *tl;
 	enum qtype qc;
 	/* This data should be different depending upon the table. */
 	data record;

@@ -6,6 +6,7 @@
 #define SELECT_LEN 6
 query::query(std::string s, const DB *db)
 {
+	this->tl = NULL;
 	this->command = s;
 	this->db = db;
 }
@@ -35,15 +36,13 @@ int query::execute()
 	int res;
 	res = parse_statement();
 
-	std::cout << this->record.serialize() << std::endl;
-
 	switch(this->qc) {
-		CREATE:
-		res = this->tl.insert_row(this->record);
+		case CREATE:
+		res = this->tl->insert_row(this->record);
 		break;
 
-		SELECT:
-		res = this->tl.select_row(this->record);
+		case SELECT:
+		res = this->tl->select_row(this->record);
 		break;
 	}
 	return res;

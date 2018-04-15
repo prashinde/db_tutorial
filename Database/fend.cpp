@@ -22,7 +22,6 @@ int main(int argc, char* argv[])
 		return -EINVAL;
 	}
 
-
 	while (true) {
 		std::cout << "> ";
 		read_input(iline);
