@@ -3,9 +3,46 @@
 #include "query.h"
 #include "table.h"
 
+data::data()
+{
+
+}
+
+std::string data::get_blob()
+{
+	return this->blob;
+}
+
+int data::get_pkey()
+{
+	return this->pkey;
+}
+
+void data::set_pkey(int pkey)
+{
+	this->pkey = pkey;
+}
+
+bool data::operator ==(data &rhs) const
+{
+	return this->pkey == rhs.pkey;
+}
+
+void data::operator =(data from)
+{
+	this->pkey = from.pkey;
+	this->blob = from.blob;
+}
+
+data::data(std::string blob)
+{
+	this->blob = blob;
+}
+
 int data::generate_pkey()
 {
-	return rand();
+	int r = rand();
+	return (r%100)+100;
 }
 
 int data::put_blob(std::string blob)
@@ -20,19 +57,26 @@ std::string data::serialize()
 	return std::string(std::to_string(this->pkey)+this->blob);
 }
 
-std::string data::deserialize()
+void data::deserialize()
 {
-	return std::string("default");
+	this->pkey = std::stoi(this->blob.substr(0, 3), nullptr, 10);
+	this->blob = this->blob.substr(3, this->blob.length());
 }
 
 int table::insert_row(data d)
 {
-	std::cout << d.serialize() << std::endl;
+	this->rows.push_back(d.serialize());
 	return 0;
 }
 
-int table::select_row(data d)
+int table::select_row(data &out)
 {
-	std::cout << d.serialize() << std::endl;
+	for(int i = 0; i < this->rows.size(); i++) {
+		data d = data(this->rows[i]);
+		d.deserialize();
+		if(d == out) {
+			out = d;
+		}
+	}
 	return 0;
 }

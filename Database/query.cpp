@@ -24,9 +24,9 @@ int query::parse_statement()
 	} else {
 		where = this->command.find("select");
 		this->qc = SELECT;
-		d.put_blob(this->command.substr(where+SELECT_LEN, this->command.length()-SELECT_LEN));
+		int pkey = std::stoi(this->command.substr(where+SELECT_LEN, this->command.length()-SELECT_LEN), nullptr, 10);
+		d.set_pkey(pkey);
 	}
-
 	this->record = d;
 	return 0;
 }
@@ -39,10 +39,14 @@ int query::execute()
 	switch(this->qc) {
 		case CREATE:
 		res = this->tl->insert_row(this->record);
+		if(res == 0)
+			std::cout << "Record is successfully inserted:" << this->record.get_pkey() << std::endl;
 		break;
 
 		case SELECT:
 		res = this->tl->select_row(this->record);
+		if(res == 0)
+			std::cout << "Selected row is:" << this->record.get_blob() << std::endl;
 		break;
 	}
 	return res;

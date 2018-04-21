@@ -24,7 +24,6 @@ int DB::db_open()
 
 table* DB::get_table_by_name(std::string table_name) const
 {
-	std::cout << "Table:" << this->tl << std::endl;
 	return this->tl;
 }
 
