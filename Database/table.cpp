@@ -68,22 +68,59 @@ table::table() { }
 table::table(pager *pgr)
 {
 	this->pgr = pgr;
+	this->line_sz = 200;
 }
 
 int table::insert_row(data d)
 {
-	this->rows.push_back(d.serialize());
+	//this->rows.push_back(d.serialize());
+	std::string row = d.serialize();
+	if(row.length() != this->line_sz) {
+		std::string t =	std::string(this->line_sz - row.length(), '\0');
+		row = row+t;
+	}
+
+	char *page;
+
+	int page_pos = (this->nr_rows*this->line_sz)%this->pgr->get_page_size();
+	int page_n = (this->nr_rows*this->line_sz)/this->pgr->get_page_size();
+
+	if(page_pos == 0) {
+		page = new char[this->pgr->get_page_size()];
+	} else {
+		page = (char *)this->pgr->read_page(page_n);
+	}
+
+	memcpy(page+page_pos, row.c_str(), this->line_sz);
+	this->pgr->write_page(page, page_n);
+	this->nr_rows++;
 	return 0;
 }
 
 int table::select_row(data &out)
 {
-	for(int i = 0; i < this->rows.size(); i++) {
-		data d = data(this->rows[i]);
-		d.deserialize();
-		if(d == out) {
-			out = d;
+	char *page;
+	int pgn = 0;
+	int nkeys = 0;
+	while((page = (char *)this->pgr->read_page(pgn)) != nullptr) {
+		int kperpage = this->pgr->get_page_size()/this->line_sz;
+		char t[this->line_sz];
+		while(kperpage != 0 && nkeys < this->nr_rows) {
+			memcpy(t, page, this->line_sz);
+			std::string row = t;
+			data d = data(row);
+			d.deserialize();
+			std::cout << t << std::endl;
+			if(d == out) {
+				out = d;
+				return 0;
+			}
+			page = page+this->line_sz;
+			kperpage--;
+			nkeys++;
 		}
+		pgn++;
 	}
-	return 0;
+
+	return -EINVAL;
 }

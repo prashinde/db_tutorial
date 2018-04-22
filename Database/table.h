@@ -29,6 +29,7 @@ class table {
 private:
 	pager *pgr;
 	int nr_rows;
+	int line_sz;
 	std::vector<std::string> rows;
 public:
 	table();
