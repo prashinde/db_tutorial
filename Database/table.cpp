@@ -63,10 +63,7 @@ void data::deserialize()
 	this->blob = this->blob.substr(3, this->blob.length());
 }
 
-table::table()
-{
-
-}
+table::table() { }
 
 table::table(pager *pgr)
 {
