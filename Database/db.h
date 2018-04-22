@@ -5,14 +5,16 @@
 #include <fstream>
 #include <string>
 #include "table.h"
+#include "pager.h"
 
 class DB {
 private:
 	std::string db_name;
 	/* This is not an active feature */
 	//map<string, int> fhandles;
-	std::ofstream tl_fstream; //filename associated with table tl
+	//std::ofstream tl_fstream; //filename associated with table tl
 	table *tl;
+	pager *pgr;
 public:
 	DB();
 	DB(const DB &db);

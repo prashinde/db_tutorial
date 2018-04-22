@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#include "pager.h"
+
 class data {
 private:
 	int pkey;
@@ -25,8 +27,12 @@ public:
 
 class table {
 private:
+	pager *pgr;
+	int nr_rows;
 	std::vector<std::string> rows;
 public:
+	table();
+	table(pager *pgr);
 	int insert_row(data d);
 	int select_row(data &d);
 };

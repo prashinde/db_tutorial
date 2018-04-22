@@ -63,6 +63,16 @@ void data::deserialize()
 	this->blob = this->blob.substr(3, this->blob.length());
 }
 
+table::table()
+{
+
+}
+
+table::table(pager *pgr)
+{
+	this->pgr = pgr;
+}
+
 int table::insert_row(data d)
 {
 	this->rows.push_back(d.serialize());

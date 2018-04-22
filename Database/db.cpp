@@ -14,12 +14,9 @@ DB::DB(std::string fname)
 
 int DB::db_open()
 {
-	this->tl_fstream.open(this->db_name);
-	if(this->tl_fstream.is_open()) {
-		this->tl = new table();
-		return 0;
-	}
-	return errno;
+	this->pgr = new pager(4096, this->db_name);
+	this->tl = new table(this->pgr);
+	return this->pgr->open_pager();
 }
 
 table* DB::get_table_by_name(std::string table_name) const
@@ -29,6 +26,8 @@ table* DB::get_table_by_name(std::string table_name) const
 
 int DB::db_close()
 {
-	this->tl_fstream.close();
+	this->pgr->close_pager();
+	delete this->pgr;
+	delete this->tl;
 	return 0;
 }
