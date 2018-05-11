@@ -15,6 +15,11 @@ int main(int argc, char* argv[])
 	std::string iline;
 	int res = 0;
 
+	if(argc < 2) {
+		std::cout << "<exec> <filename>" << std::endl;
+		return -EINVAL;
+	}
+
 	std::string fname = std::string(argv[1]);
 	DB db = DB(fname);
 	if(db.db_open() != 0) {

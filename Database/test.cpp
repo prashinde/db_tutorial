@@ -2,7 +2,7 @@
 #include <fstream>
 #include <string>
 #include <errno.h>
-
+#if 0
 int main(int argc, char *argv[])
 {
 	if(argc < 2) {
@@ -33,3 +33,4 @@ int main(int argc, char *argv[])
     in.close();
 	return 0;
 }
+#endif
