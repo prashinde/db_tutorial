@@ -1,6 +1,7 @@
 #ifndef __PAGER_H_
 #define __PAGER_H_
 
+#include <iostream>
 #include <sys/stat.h>
 #include <cerrno>
 #include <cstring>
@@ -20,6 +21,7 @@ public:
 	pager(unsigned long page_size, std::string fname);
 	int open_pager();	
 	unsigned long get_page_size();
+	off_t fsize();
 	void *read_page(int page_no);
 	int write_page(void *page, int page_no);
 	int close_pager();

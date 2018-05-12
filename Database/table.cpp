@@ -65,10 +65,21 @@ void data::deserialize()
 
 table::table() { }
 
-table::table(pager *pgr)
+table::table(pager *pgr, minfo_t mdata)
 {
 	this->pgr = pgr;
 	this->line_sz = 200;
+
+	this->nr_rows = mdata.nr_rows; //this->pgr->fsize()/this->line_sz;
+
+	//std::cout << this->nr_rows << " " << this->pgr->fsize();
+}
+
+minfo_t table::prepare_mdata()
+{
+	minfo_t mdata;
+	mdata.nr_rows = this->nr_rows;
+	return mdata;
 }
 
 int table::insert_row(data d)
@@ -84,6 +95,8 @@ int table::insert_row(data d)
 
 	int page_pos = (this->nr_rows*this->line_sz)%this->pgr->get_page_size();
 	int page_n = (this->nr_rows*this->line_sz)/this->pgr->get_page_size();
+
+	std::cout << "Page number:" << page_n << std::endl;
 
 	if(page_pos == 0) {
 		page = new char[this->pgr->get_page_size()];
@@ -110,7 +123,6 @@ int table::select_row(data &out)
 			std::string row = t;
 			data d = data(row);
 			d.deserialize();
-			std::cout << t << std::endl;
 			if(d == out) {
 				out = d;
 				return 0;

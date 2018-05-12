@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <fcntl.h>
 #include "pager.h"
 
 pager::pager() {}
@@ -10,10 +12,24 @@ pager::pager(unsigned long page_size, std::string fname)
 
 off_t pager::file_size(std::string const& filename)
 {
-    struct stat st;
-    if (stat(filename.c_str(), &st) == -1)
-        throw std::runtime_error(std::strerror(errno));
-    return st.st_size;
+	/* C, because C++ file I/O is a bull-shit
+	 * Its so fucking stupid that it cannot gaurantee 
+	 * the actual file size.. Seriosly? After a great STL,
+	 * how the file I/O can be so shitty!
+	 **/
+	FILE * pFile;
+	off_t size;
+
+	pFile = fopen (filename.c_str(),"rb");
+    fseek (pFile, 0, SEEK_END);
+    size = ftell (pFile);
+    fclose (pFile);
+    return size;
+}
+
+off_t pager::fsize()
+{
+	return file_size(this->fname);
 }
 
 unsigned long pager::get_page_size()
@@ -26,6 +42,7 @@ int pager::open_pager()
 	this->pfstream.open(this->fname);
 	if(this->pfstream.is_open())
 		return 0;
+	
 	return errno;
 }
 
@@ -40,6 +57,7 @@ void * pager::read_page(int page_no)
 	off_t fsize = file_size(this->fname);
 	unsigned long tpages = fsize/this->page_size;
 
+	std::cout << "Total pages:" << tpages << std::endl;
 	if(page_no > tpages)
 		return nullptr;
 

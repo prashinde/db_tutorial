@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include "db.h"
 #include "pager.h"
 
 class data {
@@ -33,7 +34,8 @@ private:
 	std::vector<std::string> rows;
 public:
 	table();
-	table(pager *pgr);
+	table(pager *pgr, minfo_t mdata);
+	minfo_t prepare_mdata();
 	int insert_row(data d);
 	int select_row(data &d);
 };

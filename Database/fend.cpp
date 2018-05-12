@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <random>
+#include <time.h>
 
 #include "query.h"
 #include "db.h"
@@ -27,11 +29,19 @@ int main(int argc, char* argv[])
 		return -EINVAL;
 	}
 
+	srand(time(NULL));
 	while (true) {
 		std::cout << "> ";
 		read_input(iline);
-		query q = query(iline, &db);
-		res = q.execute();
+
+		if(iline == "quit")
+			break;
+		try {
+			query q = query(iline, &db);
+			res = q.execute();
+		} catch(std::exception const &exc) {
+			std::cerr << "Exception caught " << exc.what() << "\n";
+		}
 		std::cout << std::endl;
 	}
 
