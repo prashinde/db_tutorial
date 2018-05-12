@@ -3,8 +3,10 @@
 #include <string>
 #include <vector>
 
-#include "db.h"
+#include "common.h"
 #include "pager.h"
+
+class cursor;
 
 class data {
 private:
@@ -34,9 +36,13 @@ private:
 	std::vector<std::string> rows;
 public:
 	table();
+	pager *get_pager();
 	table(pager *pgr, minfo_t mdata);
 	minfo_t prepare_mdata();
-	int insert_row(data d);
-	int select_row(data &d);
+
+	int get_lsize();
+	int get_nr_rows();
+	int insert_row(data d, cursor const &cur);
+	int select_row(data &d, cursor const &cur);
 };
 #endif

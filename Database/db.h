@@ -5,11 +5,7 @@
 #include <fstream>
 #include <string>
 
-typedef struct metainfo {
-	int nr_rows;
-} minfo_t;
-
-
+#include "common.h"
 #include "pager.h"
 #include "table.h"
 

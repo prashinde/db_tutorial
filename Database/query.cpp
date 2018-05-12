@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "query.h"
+#include "cursor.h"
 
 #define INSERT_LEN 6
 #define SELECT_LEN 6
@@ -41,15 +42,19 @@ int query::execute()
 	int res;
 	res = parse_statement();
 
+	cursor cur(this->tl);
+
 	switch(this->qc) {
 		case CREATE:
-		res = this->tl->insert_row(this->record);
+		cur.move_cursor(END);
+		res = this->tl->insert_row(this->record, cur);
 		if(res == 0)
 			std::cout << "Record is successfully inserted:" << this->record.get_pkey() << std::endl;
 		break;
 
 		case SELECT:
-		res = this->tl->select_row(this->record);
+		cur.move_cursor(START);
+		res = this->tl->select_row(this->record, cur);
 		if(res == 0)
 			std::cout << "Selected row is:" << this->record.get_blob() << std::endl;
 		break;

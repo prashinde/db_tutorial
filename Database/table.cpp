@@ -76,6 +76,11 @@ table::table(pager *pgr, minfo_t mdata)
 	//std::cout << this->nr_rows << " " << this->pgr->fsize();
 }
 
+pager *table::get_pager()
+{
+	return this->pgr;
+}
+
 minfo_t table::prepare_mdata()
 {
 	minfo_t mdata;
@@ -83,7 +88,17 @@ minfo_t table::prepare_mdata()
 	return mdata;
 }
 
-int table::insert_row(data d)
+int table::get_lsize()
+{
+	return this->line_sz;
+}
+
+int table::get_nr_rows()
+{
+	return this->nr_rows;
+}
+
+int table::insert_row(data d, cursor const &cur)
 {
 	//this->rows.push_back(d.serialize());
 	std::string row = d.serialize();
@@ -113,7 +128,7 @@ int table::insert_row(data d)
 	return 0;
 }
 
-int table::select_row(data &out)
+int table::select_row(data &out, cursor const &cur)
 {
 	char *page;
 	int pgn = 0;
