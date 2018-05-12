@@ -14,8 +14,11 @@ DB::DB(std::string fname)
 
 void DB::open_metafile()
 {
-	std::string mfname(".metafile");
-	this->pstream.open(mfname, std::fstream::out);
+	std::string mfname("metafile");
+	this->pstream.open(mfname, std::ios::in | std::ios::out);
+
+	if(!this->pstream.is_open())
+		std::cout << "Unable to open file" << std::endl;
 }
 
 void DB::close_metafile()
@@ -28,6 +31,11 @@ minfo_t DB::read_metafile()
 	std::string nrows;
 	minfo_t mdata;
 
+	if(this->pstream.peek() == std::ifstream::traits_type::eof()) {
+		mdata.nr_rows = 0;
+		return mdata;
+	}
+
 	getline(this->pstream, nrows);
 	mdata.nr_rows = atoi(nrows.c_str());
 	return mdata;
@@ -35,6 +43,7 @@ minfo_t DB::read_metafile()
 
 void DB::write_metafile(minfo_t &mdata)
 {
+	this->pstream.seekg(this->pstream.beg);
 	this->pstream << mdata.nr_rows;
 }
 
@@ -56,7 +65,6 @@ table* DB::get_table_by_name(std::string table_name) const
 int DB::db_close()
 {
 	minfo_t mdata = this->tl->prepare_mdata();
-	std::cout << "Mdata:" << mdata.nr_rows << std::endl;
 	this->write_metafile(mdata);
 	this->close_metafile();
 	this->pgr->close_pager();

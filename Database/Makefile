@@ -24,6 +24,8 @@ ${BIN_DIR}:
 	@echo $(CPPFLAGS) $(cs_LIBRARIES)
 	@echo $(cs_LIBRARIES)
 	${MKDIR_P} ${BIN_DIR}
+	touch ${BIN_DIR}/metafile
+	touch ${BIN_DIR}/dfile
 
 database: $(s_OBJS)
 	$(CC) $(s_OBJS) -o $(BIN_DIR)/$@ $(cs_LIBRARIES)
