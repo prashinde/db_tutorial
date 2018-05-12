@@ -20,9 +20,9 @@ off_t pager::file_size(std::string const& filename)
 	FILE * pFile;
 	off_t size;
 
-	pFile = fopen (filename.c_str(),"rb");
+	pFile = fopen(filename.c_str(),"rb");
     fseek (pFile, 0, SEEK_END);
-    size = ftell (pFile);
+    size = ftell(pFile);
     fclose (pFile);
     return size;
 }
@@ -48,7 +48,9 @@ int pager::open_pager()
 
 int pager::close_pager()
 {
+	std::cout << "For closing file suze:" << file_size(this->fname) << std::endl;
 	this->pfstream.close();
+	std::cout << "After closing file suze:" << file_size(this->fname) << std::endl;
 	return 0;
 }
 
@@ -57,13 +59,14 @@ void * pager::read_page(int page_no)
 	off_t fsize = file_size(this->fname);
 	unsigned long tpages = fsize/this->page_size;
 
-	std::cout << "Total pages:" << tpages << std::endl;
-	if(page_no > tpages)
+	std::cout << "Fsize:" << fsize << " Total pages:" << tpages << "pnp:" << page_no << std::endl;
+	if(page_no > tpages) {
 		return nullptr;
+	}
 
 	char *page = new char[page_size];
 	off_t foffset = page_no*page_size;
-	
+
 	this->pfstream.seekg(foffset, std::ios_base::beg);
 
 	this->pfstream.read(page, page_size);
@@ -74,6 +77,8 @@ int pager::write_page(void *page, int page_no)
 {
 	/* 1. Check if the */
 	off_t foffset = page_no*page_size;
-	this->pfstream.seekg(foffset, std::ios_base::beg);
+	std::cout << "Write offset = " << foffset << " " << page_size << std::endl;
+	this->pfstream.seekg(foffset, std::ios::beg);
 	this->pfstream.write((char *)page, page_size);
+	this->pfstream.flush();
 }

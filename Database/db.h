@@ -27,9 +27,9 @@ public:
 	DB(const DB &db);
 	DB(std::string fname);
 	table* get_table_by_name(std::string table_name) const;
-	int db_open();
+	int db_open(std::string fname);
 	int db_close();	
-	void open_metafile();
+	void open_metafile(std::string mfname);
 	void close_metafile();
 	minfo_t read_metafile();
 	void write_metafile(minfo_t &mdata);

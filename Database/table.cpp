@@ -49,6 +49,7 @@ int data::put_blob(std::string blob)
 {
 	this->pkey = generate_pkey();
 	this->blob = blob;
+	std::cout << "Blob:" << blob << std::endl;
 	return 0;
 }
 
@@ -68,7 +69,7 @@ table::table() { }
 table::table(pager *pgr, minfo_t mdata)
 {
 	this->pgr = pgr;
-	this->line_sz = 200;
+	this->line_sz = 256;
 
 	this->nr_rows = mdata.nr_rows; //this->pgr->fsize()/this->line_sz;
 
@@ -96,7 +97,7 @@ int table::insert_row(data d)
 	int page_pos = (this->nr_rows*this->line_sz)%this->pgr->get_page_size();
 	int page_n = (this->nr_rows*this->line_sz)/this->pgr->get_page_size();
 
-	std::cout << "Page number:" << page_n << std::endl;
+	std::cout << "Page number:" << page_n <<  " " << page_pos << std::endl;
 
 	if(page_pos == 0) {
 		page = new char[this->pgr->get_page_size()];
@@ -104,8 +105,10 @@ int table::insert_row(data d)
 		page = (char *)this->pgr->read_page(page_n);
 	}
 
+	printf("Pointer addess:%p %p\n", page, page+page_pos);
 	memcpy(page+page_pos, row.c_str(), this->line_sz);
 	this->pgr->write_page(page, page_n);
+	delete [] page;
 	this->nr_rows++;
 	return 0;
 }

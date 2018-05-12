@@ -3,6 +3,7 @@
 #include <fstream>
 #include <random>
 #include <time.h>
+#include <algorithm>
 
 #include "query.h"
 #include "db.h"
@@ -17,19 +18,38 @@ int main(int argc, char* argv[])
 	std::string iline;
 	int res = 0;
 
-	if(argc < 2) {
-		std::cout << "<exec> <filename>" << std::endl;
+	if(argc < 5) {
+		std::cout << "<exec> <filename> <metafilename> <seed> <is_interactive>" << std::endl;
 		return -EINVAL;
 	}
 
+	int seed = atoi(argv[3]);
+	srand(seed);
 	std::string fname = std::string(argv[1]);
+	std::string metafilename = std::string(argv[2]);
 	DB db = DB(fname);
-	if(db.db_open() != 0) {
+	if(db.db_open(metafilename) != 0) {
 		std::cout << "Unable to open database file:" << fname << std::endl;
 		return -EINVAL;
 	}
 
-	srand(time(NULL));
+	bool interactive = atoi(argv[4]);
+	if(!interactive) {
+		int cnt = 0;
+		while(cnt != argc-5) {
+			iline += argv[5+cnt];
+			iline += " ";
+			cnt++;
+		}
+
+		iline.erase(std::remove(iline.begin(), iline.end(), '\"'), iline.end());
+		std::cout << iline << std::endl;
+		query q = query(iline, &db);
+		q.execute();
+		db.db_close();
+		return 0;
+	}
+
 	while (true) {
 		std::cout << "> ";
 		read_input(iline);

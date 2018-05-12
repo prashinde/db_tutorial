@@ -12,9 +12,8 @@ DB::DB(std::string fname)
 	this->db_name = fname;
 }
 
-void DB::open_metafile()
+void DB::open_metafile(std::string mfname)
 {
-	std::string mfname("metafile");
 	this->pstream.open(mfname, std::ios::in | std::ios::out);
 
 	if(!this->pstream.is_open())
@@ -47,9 +46,9 @@ void DB::write_metafile(minfo_t &mdata)
 	this->pstream << mdata.nr_rows;
 }
 
-int DB::db_open()
+int DB::db_open(std::string fname)
 {
-	this->open_metafile();
+	this->open_metafile(fname);
 	minfo_t mdata = this->read_metafile();
 
 	this->pgr = new pager(4096, this->db_name);
