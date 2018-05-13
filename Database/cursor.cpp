@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "cursor.h"
 cursor::cursor() { }
 
@@ -20,13 +22,15 @@ int cursor::move_cursor(CURSOR_POS pos)
 	return 0;
 }
 
-void *cursor::cursor_value()
+void *cursor::cursor_value() const
 {
 	unsigned long pgsize = this->pgr->get_page_size();
 	unsigned long page_num = (this->rnum*this->tl->get_lsize())/pgsize;
 	unsigned long page_pos = (this->rnum*this->tl->get_lsize())%pgsize;
 
-	return this->pgr->read_page(page_num)+page_pos;
+	void *addr = this->pgr->get_page(page_num);
+	printf("Pager address in cursoe:%p, pagepos=%lu\n", addr, page_pos);
+	return ((char*)addr)+page_pos;
 }
 
 void cursor::advance_cursor()

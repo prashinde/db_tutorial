@@ -2,6 +2,7 @@
 
 #include "query.h"
 #include "table.h"
+#include "common.h"
 
 data::data()
 {
@@ -49,7 +50,6 @@ int data::put_blob(std::string blob)
 {
 	this->pkey = generate_pkey();
 	this->blob = blob;
-	std::cout << "Blob:" << blob << std::endl;
 	return 0;
 }
 
@@ -100,14 +100,13 @@ int table::get_nr_rows()
 
 int table::insert_row(data d, cursor const &cur)
 {
-	//this->rows.push_back(d.serialize());
 	std::string row = d.serialize();
 	if(row.length() != this->line_sz) {
 		std::string t =	std::string(this->line_sz - row.length(), '\0');
 		row = row+t;
 	}
 
-	char *page;
+	/*char *page;
 
 	int page_pos = (this->nr_rows*this->line_sz)%this->pgr->get_page_size();
 	int page_n = (this->nr_rows*this->line_sz)/this->pgr->get_page_size();
@@ -120,16 +119,20 @@ int table::insert_row(data d, cursor const &cur)
 		page = (char *)this->pgr->read_page(page_n);
 	}
 
-	printf("Pointer addess:%p %p\n", page, page+page_pos);
-	memcpy(page+page_pos, row.c_str(), this->line_sz);
-	this->pgr->write_page(page, page_n);
-	delete [] page;
+	printf("Pointer addess:%p %p\n", page, page+page_pos);*/
+	void *addr = cur.cursor_value();
+	memcpy(addr, row.c_str(), this->line_sz);
+	printf("Page address in table:%p\n", addr);
+	std::cout << "Inside:" << (char *)addr <<  " " << row.c_str() << std::endl;
+	//this->pgr->write_page(page, page_n);
+	//delete [] page;
 	this->nr_rows++;
 	return 0;
 }
 
 int table::select_row(data &out, cursor const &cur)
 {
+#if 0
 	char *page;
 	int pgn = 0;
 	int nkeys = 0;
@@ -151,6 +154,6 @@ int table::select_row(data &out, cursor const &cur)
 		}
 		pgn++;
 	}
-
+#endif
 	return -EINVAL;
 }

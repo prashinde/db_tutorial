@@ -4,11 +4,16 @@
 
 pager::pager() {}
 
+int in_mem_pages;
+	bool is_in_mem(int pagenum);
+	void set_in_mem(int pagenum);
+
 pager::pager(unsigned long page_size, std::string fname)
 {
 	this->page_size = page_size;
 	this->fname = fname;
 }
+
 
 off_t pager::file_size(std::string const& filename)
 {
@@ -48,37 +53,64 @@ int pager::open_pager()
 
 int pager::close_pager()
 {
-	std::cout << "For closing file suze:" << file_size(this->fname) << std::endl;
+	this->sync_pages();
 	this->pfstream.close();
-	std::cout << "After closing file suze:" << file_size(this->fname) << std::endl;
 	return 0;
 }
 
-void * pager::read_page(int page_no)
+bool pager::is_in_mem(int pagenum)
+{
+	return (this->page_map.count(pagenum) != 0);
+}
+
+void pager::place_in_mem(int pagenum, void *ptr)
+{
+	this->page_map[pagenum] = ptr;
+}
+
+void * pager::get_page(int page_no)
 {
 	off_t fsize = file_size(this->fname);
 	unsigned long tpages = fsize/this->page_size;
-
-	std::cout << "Fsize:" << fsize << " Total pages:" << tpages << "pnp:" << page_no << std::endl;
+	char *page;
+	//std::cout << "Fsize:" << fsize << " Total pages:" << tpages << "pnp:" << page_no << std::endl;
 	if(page_no > tpages) {
-		return nullptr;
+		page = new char[page_size];
+		this->page_map[page_no] = page;
+		this->place_in_mem(page_no, page);
+	} else if(is_in_mem(page_no)) {
+		page = (char *)this->page_map[page_no];
+	} else {
+		page = new char[page_size];
+		off_t foffset = page_no*page_size;
+		this->pfstream.seekg(foffset, std::ios_base::beg);
+		this->pfstream.read(page, page_size);
+		this->place_in_mem(page_no, page);
 	}
 
-	char *page = new char[page_size];
-	off_t foffset = page_no*page_size;
-
-	this->pfstream.seekg(foffset, std::ios_base::beg);
-
-	this->pfstream.read(page, page_size);
+	printf("Address of the get page:%p\n", page);
 	return (void*)page;
+}
+
+void pager::sync_pages()
+{
+	for(std::map<int, void *>::iterator it=this->page_map.begin();\
+			it != this->page_map.end(); ++it) {
+	   write_page(it->second, it->first);
+	   //delete [] (char *)it->second;
+	}
 }
 
 int pager::write_page(void *page, int page_no)
 {
 	/* 1. Check if the */
+	printf("Page address in write page:%p, %s, %d\n", page, (char *)page, page_no);
+	this->pfstream.seekg(0, this->pfstream.beg);
+	this->pfstream.clear();
 	off_t foffset = page_no*page_size;
-	std::cout << "Write offset = " << foffset << " " << page_size << std::endl;
+	this->pfstream.clear();
 	this->pfstream.seekg(foffset, std::ios::beg);
+	this->pfstream.clear();
 	this->pfstream.write((char *)page, page_size);
 	this->pfstream.flush();
 }

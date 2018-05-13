@@ -5,8 +5,7 @@
 
 #include "common.h"
 #include "pager.h"
-
-class cursor;
+#include "cursor.h"
 
 class data {
 private:
@@ -27,7 +26,7 @@ public:
 	bool operator ==(data &rhs) const;
 	void operator =(data to);
 };
-
+#if 0
 class table {
 private:
 	pager *pgr;
@@ -45,4 +44,5 @@ public:
 	int insert_row(data d, cursor const &cur);
 	int select_row(data &d, cursor const &cur);
 };
+#endif
 #endif

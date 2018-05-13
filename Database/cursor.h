@@ -1,8 +1,7 @@
 #ifndef __CURSOR_H_
 #define __CURSOR_H_
-
+#if 0
 #include "pager.h"
-#include "table.h"
 
 enum CURSOR_POS {
 	START = 1,
@@ -19,7 +18,8 @@ public:
 	cursor();
 	cursor(table *t);
 	int move_cursor(CURSOR_POS pos);
-	void *cursor_value();
+	void *cursor_value() const;
 	void advance_cursor();
 };
+#endif
 #endif
