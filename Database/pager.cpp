@@ -73,7 +73,6 @@ void * pager::get_page(int page_no)
 	off_t fsize = file_size(this->fname);
 	unsigned long tpages = fsize/this->page_size;
 	char *page;
-	//std::cout << "Fsize:" << fsize << " Total pages:" << tpages << "pnp:" << page_no << std::endl;
 	if(page_no > tpages) {
 		page = new char[page_size];
 		this->page_map[page_no] = page;
@@ -88,7 +87,6 @@ void * pager::get_page(int page_no)
 		this->place_in_mem(page_no, page);
 	}
 
-	printf("Address of the get page:%p\n", page);
 	return (void*)page;
 }
 
@@ -104,7 +102,6 @@ void pager::sync_pages()
 int pager::write_page(void *page, int page_no)
 {
 	/* 1. Check if the */
-	printf("Page address in write page:%p, %s, %d\n", page, (char *)page, page_no);
 	this->pfstream.seekg(0, this->pfstream.beg);
 	this->pfstream.clear();
 	off_t foffset = page_no*page_size;

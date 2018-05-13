@@ -29,11 +29,15 @@ void *cursor::cursor_value() const
 	unsigned long page_pos = (this->rnum*this->tl->get_lsize())%pgsize;
 
 	void *addr = this->pgr->get_page(page_num);
-	printf("Pager address in cursoe:%p, pagepos=%lu\n", addr, page_pos);
 	return ((char*)addr)+page_pos;
 }
 
-void cursor::advance_cursor()
+bool cursor::cursor_end() const
+{
+	return this->is_end;
+}
+
+void cursor::cursor_advance()
 {
 	this->rnum += 1;
 	if(this->rnum >= this->tl->get_nr_rows())

@@ -22,9 +22,10 @@ private:
 public:
 	cursor();
 	cursor(table *t);
+	bool cursor_end() const;
 	int move_cursor(CURSOR_POS pos);
 	void *cursor_value() const;
-	void advance_cursor();
+	void cursor_advance();
 };
 
 class table {
@@ -41,7 +42,7 @@ public:
 	int get_lsize();
 	int get_nr_rows();
 	int insert_row(data d, cursor const &cur);
-	int select_row(data &d, cursor const &cur);
+	int select_row(data &d, cursor &cur);
 };
 
 #endif

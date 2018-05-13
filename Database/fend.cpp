@@ -43,7 +43,6 @@ int main(int argc, char* argv[])
 		}
 
 		iline.erase(std::remove(iline.begin(), iline.end(), '\"'), iline.end());
-		std::cout << iline << std::endl;
 		query q = query(iline, &db);
 		q.execute();
 		db.db_close();
